@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Radioactive Isotopes Half-Life Explorer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
+            color: #fff;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        
+        h1 {
+            font-size: 2.8rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .tab {
+            padding: 15px 25px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            border: 2px solid transparent;
+        }
+        
+        .tab:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .tab.active {
+            background: rgba(255, 255, 255, 0.25);
+            border: 2px solid #fff;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+        }
+        
+        .cards-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+        }
+        
+        .card {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 15px;
+            padding: 25px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: none;
+        }
+        
+        .card.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .element-name {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+            color: #fdbb2d;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .decay-type {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            margin-right: 8px;
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        .half-life {
+            font-size: 1.4rem;
+            margin: 15px 0;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .info {
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            font-style: italic;
+        }
+        
+        .super-short .half-life { color: #ff6b6b; }
+        .medium .half-life { color: #48dbfb; }
+        .long .half-life { color: #1dd1a1; }
+        
+        .super-short { border-top: 5px solid #ff6b6b; }
+        .medium { border-top: 5px solid #48dbfb; }
+        .long { border-top: 5px solid #1dd1a1; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .decay-icon {
+            font-size: 1.2rem;
+            margin-right: 5px;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+        
+        @media (max-width: 768px) {
+            .cards-container {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Radioactive Isotopes Half-Life Explorer</h1>
+            <p class="subtitle">Explore various radioactive isotopes and their half-lives - the time it takes for half of the radioactive material to decay</p>
+        </header>
+        
+        <div class="tabs">
+            <div class="tab active" data-category="all">All Isotopes</div>
+            <div class="tab" data-category="super-short">Super Short Half-Lives</div>
+            <div class="tab" data-category="medium">Medium Half-Lives</div>
+            <div class="tab" data-category="long">Long Half-Lives</div>
+        </div>
+        
+        <div class="cards-container">
+            <!-- Super Short Half-Lives -->
+            <div class="card super-short" data-category="super-short">
+                <h2 class="element-name"><i class="fas fa-atom"></i> Beryllium-8</h2>
+                <div class="decay">
+                    <span class="decay-type"><i class="fas fa-bolt decay-icon"></i> α Decay</span>
+                </div>
+                <div class="half-life">Half-life: 8.2 × 10⁻¹⁷ seconds</div>
+                <div class="info">
+                    <p><i class="fas fa-lightbulb"></i> "8 for Be-8 → gone in an instant"</p>
+                </div>
+            </div>
+            
+            <div class="card super-short" data-category="super-short">
+                <h2 class="element-name"><i class="fas fa-atom"></i> Polonium-214</h2>
+                <div class="decay">
+                    <span class="decay-type"><i class="fas fa-bolt decay-icon"></i> α Decay</span>
+                    <span class="decay-type"><i class="fas fa-bolt decay-icon"></i> γ Decay</span>
+                </div>
+                <div class="half-life">Half-life: 0.000164 seconds</div>
+                <div class="info">
+                    <p><i class="fas fa-lightbulb"></i> "Po → Pop → instant micro-bang"</p>
+                </div>
+            </div>
+            
+            <div class="card super-short" data-category="super-short">
+                <h2 class="element-name"><i class="fas fa-atom"></i> Oxygen-15</h2>
+                <div class="decay">
+                    <span class="decay-type"><i class="fas fa-bolt decay-icon"></i> β⁺ Decay</span>
+                </div>
+                <div class="half-life">Half-life: 122 seconds (~2 minutes)</div>
+                <div class="info">
+                    <p><i class="fas fa-lightbulb"></i> "Oxygen in breath → seconds matter"</p>
+                </div>
+            </div>
+            
+            <!-- Medium Half-Lives -->
+            <div class="card medium" data-category="medium">
+                <h2 class="element-name"><i class="fas fa-atom"></i> Lead-212</h2>
+                <div class="decay">
+                    <span class="decay-type"><i class="fas fa-bolt decay-icon"></i> β⁻ Decay</span>
+                    <span class="decay-type"><i class="fas fa-bolt decay-icon"></i> γ Decay</span>
+                </div>
+                <div class="half-life">Half-life: 10.6 hours</div>
+                <div class="info">
+                    <p><i class="fas fa-lightbulb"></i> "Heavy metal → hours to cool down"</p>
+                </div>
+            </div>
+            
+            <div class="card medium" data-category="medium">
+                <h2 class="element-name"><i class="fas fa-atom"></i> Iodine-131</h2>
+                <div class="decay">
+                    <span class="decay-type"><i class="fas fa-bolt decay-icon"></i> β⁻ Decay</span>
+                    <span class="decay-type"><i class="fas fa-bolt decay-icon"></i> γ Decay</span>
+                </div>
+                <div class="half-life">Half-life: 8.04 days</div>
+                <div class="info">
+                    <p><i class="fas fa-lightbulb"></i> "Thyroid medicine dose lasts days"</p>
+                </div>
+            </div>
+            
+            <div class="card medium" data-category="medium">
+                <h2 class="element-name"><i class="fas fa-atom"></i> Einsteinium-254</h2>
+                <div class="decay">
+                    <span class="decay-type"><i class="fas fa-bolt decay-icon"></i> α Decay</span>
+                    <span class="decay-type"><i class="fas fa-bolt decay-icon"></i> γ Decay</span>
+                </div>
+                <div class="half-life">Half-life: 275.7 days (~9 months)</div>
+                <div class="info">
+                    <p><i class="fas fa-lightbulb"></i> "Einstein → not eternal, lasts months"</p>
+                </div>
+            </div>
+            
+            <!-- Long Half-Lives -->
+            <div class="card long" data-category="long">
+                <h2 class="element-name"><i class="fas fa-atom"></i> Cobalt-60</h2>
+                <div class="decay">
+                    <span class="decay-type"><i class="fas fa-bolt decay-icon"></i> β⁻ Decay</span>
+                    <span class="decay-type"><i class="fas fa-bolt decay-icon"></i> γ Decay</span>
+                </div>
+                <div class="half-life">Half-life: 5.3 years</div>
+                <div class="info">
+                    <p><i class="fas fa-lightbulb"></i> "Cobalt therapy machines → used for years"</p>
+                </div>
+            </div>
+            
+            <div class="card long" data-category="long">
+                <h2 class="element-name"><i class="fas fa-atom"></i> Carbon-14</h2>
+                <div class="decay">
+                    <span class="decay-type"><i class="fas fa-bolt decay-icon"></i> β⁻ Decay</span>
+                </div>
+                <div class="half-life">Half-life: 5730 years</div>
+                <div class="info">
+                    <p><i class="fas fa-lightbulb"></i> "Carbon dating → fossils, thousands of years"</p>
+                </div>
+            </div>
+            
+            <div class="card long" data-category="long">
+                <h2 class="element-name"><i class="fas fa-atom"></i> Radium-226</h2>
+                <div class="decay">
+                    <span class="decay-type"><i class="fas fa-bolt decay-icon"></i> α Decay</span>
+                    <span class="decay-type"><i class="fas fa-bolt decay-icon"></i> γ Decay</span>
+                </div>
+                <div class="half-life">Half-life: 1600 years</div>
+                <div class="info">
+                    <p><i class="fas fa-lightbulb"></i> "Marie Curie's radium glows for centuries"</p>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>Created for educational purposes | Half-life data from various scientific sources</p>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabs = document.querySelectorAll('.tab');
+            const cards = document.querySelectorAll('.card');
+            
+            // Show all cards initially
+            showCategory('all');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // Remove active class from all tabs
+                    tabs.forEach(t => t.classList.remove('active'));
+                    
+                    // Add active class to clicked tab
+                    tab.classList.add('active');
+                    
+                    // Get category from data attribute
+                    const category = tab.getAttribute('data-category');
+                    
+                    // Show cards for selected category
+                    showCategory(category);
+                });
+            });
+            
+            function showCategory(category) {
+                cards.forEach(card => {
+                    if (category === 'all') {
+                        card.classList.add('active');
+                    } else {
+                        if (card.getAttribute('data-category') === category) {
+                            card.classList.add('active');
+                        } else {
+                            card.classList.remove('active');
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
